@@ -1,9 +1,42 @@
 const gameBoard = (() => {
     let gameBoard = ["","","","","","","","",""];
     const addToBoard = (i, marker) => gameBoard[i] = marker;
+
+    const isGameOver = function() {
+        return isThereThreeInARow() || isThereATie();
+    }
+
+    const isThereThreeInARow = function() {
+        return ((gameBoard[0] === "X" && gameBoard[1] === "X" && gameBoard[2] === "X")
+            || (gameBoard[3] === "X" && gameBoard[4] === "X" && gameBoard[5] === "X")
+            || (gameBoard[6] === "X" && gameBoard[7] === "X" && gameBoard[8] === "X")
+            || (gameBoard[0] === "X" && gameBoard[3] === "X" && gameBoard[6] === "X")
+            || (gameBoard[1] === "X" && gameBoard[4] === "X" && gameBoard[7] === "X")
+            || (gameBoard[2] === "X" && gameBoard[5] === "X" && gameBoard[8] === "X")
+            || (gameBoard[0] === "X" && gameBoard[4] === "X" && gameBoard[8] === "X")
+            || (gameBoard[2] === "X" && gameBoard[4] === "X" && gameBoard[6] === "X")
+            || (gameBoard[0] === "O" && gameBoard[1] === "O" && gameBoard[2] === "O")
+            || (gameBoard[3] === "O" && gameBoard[4] === "O" && gameBoard[5] === "O")
+            || (gameBoard[6] === "O" && gameBoard[7] === "O" && gameBoard[8] === "O")
+            || (gameBoard[0] === "O" && gameBoard[3] === "O" && gameBoard[6] === "O")
+            || (gameBoard[1] === "O" && gameBoard[4] === "O" && gameBoard[7] === "O")
+            || (gameBoard[2] === "O" && gameBoard[5] === "O" && gameBoard[8] === "O")
+            || (gameBoard[0] === "O" && gameBoard[4] === "O" && gameBoard[8] === "O")
+            || (gameBoard[2] === "O" && gameBoard[4] === "O" && gameBoard[6] === "O"))
+    }
+
+    const isThereATie = function() {
+        let tie = true;
+        for (let i = 0; i < 9; i++) {
+            tie = tie && gameBoard[i] !== "";
+        }
+        return tie;
+    }
+
     return {
         gameBoard,
-        addToBoard
+        addToBoard,
+        isGameOver
     }
 })();
 
@@ -27,8 +60,8 @@ const player = (name, marker) => {
     return { name, marker, markOnBoard };
 }
 
-const player1 = player("Joe", "X");
-const player2 = player("Clare", "O");
+const player1 = player("Player1", "X");
+const player2 = player("Player2", "O");
 
 const gameFlow = (() => {
     let currentPlayer = player1;
@@ -40,8 +73,7 @@ const gameFlow = (() => {
             currentPlayer.markOnBoard(location);
             currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
             displayController.drawBoard(gameBoard);
-            console.log(gameBoard.gameBoard)
-            console.log("Player moved.")
+            console.log(gameBoard.isGameOver());
         }
     }
     const isValidMove = function(location) {
@@ -50,12 +82,9 @@ const gameFlow = (() => {
     return { currentPlayer, startGame, playerMove }
 })();
 
-console.log(gameBoard.gameBoard);
-
 const cells = document.querySelectorAll(".cell");
 cells.forEach(function(cell) {
     cell.addEventListener('click', () => gameFlow.playerMove(cell.id))
-    console.log(cell);
 })
 
 gameFlow.startGame();
