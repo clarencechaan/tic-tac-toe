@@ -1,6 +1,9 @@
 const gameBoard = (() => {
     let gameBoard = ["","","","","","","","",""];
-    const addToBoard = (i, marker) => gameBoard[i] = marker;
+
+    const addToBoard = function(i, marker) {
+        gameBoard[i] = marker;
+    }
 
     const isGameOver = function() {
         return isThereThreeInARow() || isThereATie();
@@ -33,10 +36,18 @@ const gameBoard = (() => {
         return tie;
     }
 
+    const clearBoard = function() {
+        console.log("Board cleared.")
+        gameBoard = ["","","","","","","","",""];
+    }
+
     return {
         gameBoard,
         addToBoard,
-        isGameOver
+        isGameOver,
+        isThereThreeInARow,
+        isThereATie,
+        clearBoard
     }
 })();
 
@@ -47,37 +58,54 @@ const displayController = (() => {
             cell.textContent = gameBoard.gameBoard[i];
         }
     }
+    const displayGameEndingMessage = function () {
+        const message = document.getElementById("message");
+        if (gameBoard.isThereATie()) {
+            message.textContent = "Tie game!"
+        } else if (gameBoard.isThereThreeInARow()) {
+            message.textContent = winner.name + " wins!"
+        }
+    }
     return {
-        drawBoard
+        drawBoard,
+        displayGameEndingMessage
     }
 })();
 
 const player = (name, marker) => {
     const markOnBoard = function (location) {
+        console.log(marker + " on " + location);
         gameBoard.addToBoard(location, marker);
+        console.log(gameBoard.gameBoard);
     }
 
     return { name, marker, markOnBoard };
 }
 
-const player1 = player("Player1", "X");
-const player2 = player("Player2", "O");
+const player1 = player("Player 1", "X");
+const player2 = player("Player 2", "O");
+let winner;
 
 const gameFlow = (() => {
     let currentPlayer = player1;
     const startGame = function() {
+        console.log("game started.")
+        // gameBoard.clearBoard();
         displayController.drawBoard(gameBoard);
     }
     const playerMove = function(location) {
         if (isValidMove(location)) {
             currentPlayer.markOnBoard(location);
-            currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
             displayController.drawBoard(gameBoard);
-            console.log(gameBoard.isGameOver());
+            if (gameBoard.isGameOver()) {
+                winner = currentPlayer;
+                displayController.displayGameEndingMessage();
+            }
+            currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
         }
     }
     const isValidMove = function(location) {
-        return gameBoard.gameBoard[location] === "";
+        return (gameBoard.gameBoard[location] === "" && !gameBoard.isGameOver());
     }
     return { currentPlayer, startGame, playerMove }
 })();
@@ -86,5 +114,10 @@ const cells = document.querySelectorAll(".cell");
 cells.forEach(function(cell) {
     cell.addEventListener('click', () => gameFlow.playerMove(cell.id))
 })
+
+
+const startGameBtn = document.getElementById("startBtn");
+startGameBtn.addEventListener('click', gameFlow.startGame);
+
 
 gameFlow.startGame();
