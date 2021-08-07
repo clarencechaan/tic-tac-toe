@@ -60,11 +60,11 @@ const displayController = (() => {
     }
     const displayGameEndingMessage = function () {
         const message = document.getElementById("message");
-        if (gameBoard.isThereATie()) {
-            message.textContent = "Tie game!"
-        } else if (gameBoard.isThereThreeInARow()) {
+        if (gameBoard.isThereThreeInARow()) {
             message.textContent = winner.name + " wins!"
-        }
+        } else if (gameBoard.isThereATie()) {
+            message.textContent = "Tie game!"
+        } 
     }
     return {
         drawBoard,
@@ -112,9 +112,15 @@ const gameFlow = (() => {
 
 const cells = document.querySelectorAll(".cell");
 cells.forEach(function(cell) {
-    cell.addEventListener('click', () => gameFlow.playerMove(cell.id))
+    cell.addEventListener('click', () => gameFlow.playerMove(cell.id));
 })
 
+function setNames() {
+    const player1name = document.getElementById("player1name").value;
+    const player2name = document.getElementById("player2name").value;
+    player1.name = player1name;
+    player2.name = player2name;
+}
 
 const startGameBtn = document.getElementById("startBtn");
 startGameBtn.addEventListener('click', gameFlow.startGame);
