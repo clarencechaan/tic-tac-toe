@@ -1,1 +1,1 @@
-creating Tac Tac Toe in HTML, CSS, and Javascript
+creating Tic Tac Toe in HTML, CSS, and Javascript
